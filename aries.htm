@@ -2,10 +2,17 @@
     <head>
         <title>Aries project</title>
         <link rel="stylesheet" type="text/css"href="aries.css">
+        <script type="text/javascript" src="Fader.js"></script>
+        <script type="text/javascript" src="aries.js"></script>
     </head>
     <body>
-        <img id="img" class="center" src="imgs/dbz.png" onclick='changeImage()'>
+        <!-- this element contains the panels -->
+        <div id="fader" onclick='changeImage()'>
+            <!-- this is the first panel -->
+            <img id="img0" src="" />
+            <img id="img1" src="" />
+        </div>
     </body>
+    
 
-    <script src="aries.js"></script>
 </html>

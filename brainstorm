@@ -1,0 +1,4 @@
+1. Front end will make ajax calls to the backend every 3 seconds asking for the next image
+2. Backend will return a new image every 10minutes (configurable), unless someone else changed the config (via googlehome)
+3. Front end if received same image you have do nothing
+4. Front end if received new image do a transition.
