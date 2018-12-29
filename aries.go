@@ -12,7 +12,7 @@ import (
 type Page struct {
 	Title string
 	Body  []byte
-	MyVals string
+	ImageList string
 }
 
 
@@ -29,7 +29,7 @@ func loadPage(title string) (*Page, error) {
 func viewHandler(w http.ResponseWriter, r *http.Request) {
 	title := r.URL.Path[len("/view/"):]
 	p, _ := loadPage(title)
-	p.MyVals = readDir()
+	p.ImageList = readDir("imgs/")
 	if strings.Contains(title, "htm"){
 		t, _ := template.ParseFiles(title)
     	t.Execute(w, p)
@@ -43,8 +43,8 @@ func main() {
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
 
-func readDir()(filesString string){
-	files, err := ioutil.ReadDir("imgs/")
+func readDir(directoryName string)(filesString string){
+	files, err := ioutil.ReadDir(directoryName)
     if err != nil {
         log.Fatal(err)
     }

@@ -1,5 +1,5 @@
 window.onload = function start() {
-    images = window.myValues.split(",")
+    images = window.imageList.split(",")
     images = shuffle(images)
     fader = new Fader('fader',3);
     changeImage();
@@ -26,8 +26,6 @@ function shuffle(array) {
   }
 
 function changeImage() {
-    
-
     var imgCurrentId = "img" + (toogle ? 1 : 0);
     var imgNextId = "img" + (!toogle ? 1 : 0);
 
