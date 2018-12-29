@@ -1,4 +1,6 @@
 window.onload = function start() {
+    images = window.myValues.split(",")
+    images = shuffle(images)
     fader = new Fader('fader',3);
     changeImage();
     canvas();
@@ -7,7 +9,7 @@ window.onload = function start() {
 function canvas() {
     window.setInterval(function () {
         changeImage()
-    }, 300000);  
+    }, 60000);  
 }
 
 function shuffle(array) {
@@ -24,6 +26,8 @@ function shuffle(array) {
   }
 
 function changeImage() {
+    
+
     var imgCurrentId = "img" + (toogle ? 1 : 0);
     var imgNextId = "img" + (!toogle ? 1 : 0);
 
@@ -49,12 +53,7 @@ function calculateMisingHeight(img_width){
 
 var height=1680
 var width=1050
-
-var image1="banksi.jpg"
-var image2="dbz.png"
-var image3="matrix.jpg"
-var image4="monalisa.jpg"
-var images = shuffle([image1,image2,image3,image4])
+var images
 var indexCount = 1
 var toogle=true;
 var fader;
