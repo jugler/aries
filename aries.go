@@ -10,11 +10,10 @@ import (
 )
 
 type Page struct {
-	Title string
 	Body  []byte
 	ImageList string
+	ImageRefresh int
 }
-
 
 
 func loadPage(title string) (*Page, error) {
@@ -23,34 +22,41 @@ func loadPage(title string) (*Page, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &Page{Title: title, Body: body}, nil
+	return &Page{Body: body, ImageRefresh: 60000}, nil
 }
 
 func viewHandler(w http.ResponseWriter, r *http.Request) {
-	title := r.URL.Path[len("/view/"):]
-	p, _ := loadPage(title)
-	p.ImageList = readDir("imgs/")
-	if strings.Contains(title, "htm"){
-		t, _ := template.ParseFiles(title)
+	url := r.URL.Path[len("/"):]
+	s := strings.SplitAfterN(url, "/", 2)
+	typePage, query := s[0], s[1]
+	log.Print("Serving: " + typePage)
+	log.Print("Query: " +  query)
+	p, _ := loadPage(query)
+	if strings.Contains(query, ".htm"){
+		p.ImageList = readImagesDir(typePage)
+		t, _ := template.ParseFiles(query)
     	t.Execute(w, p)
 	}else{
 		fmt.Fprintf(w, "%s", p.Body)
 	}
 }
 
+
 func main() {
-	http.HandleFunc("/view/", viewHandler)
+	http.HandleFunc("/", viewHandler)
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
 
-func readDir(directoryName string)(filesString string){
-	files, err := ioutil.ReadDir(directoryName)
+func readImagesDir(directoryName string)(filesString string){
+	dirname := "imgs/" + directoryName
+	files, err := ioutil.ReadDir(dirname)
     if err != nil {
         log.Fatal(err)
-    }
+	}
 	filenames := make([]string, 0)
 	for _, f := range files {
-		filenames=append(filenames, f.Name())
+		log.Print(dirname+f.Name())
+		filenames=append(filenames, dirname + f.Name())
 	}
 	filesString = strings.Join(filenames,",")
 	return

@@ -4,15 +4,18 @@
         <link rel="stylesheet" type="text/css"href="aries.css">
         <script type="text/javascript" src="Fader.js"></script>
         <script type="text/javascript" src="aries.js"></script>
+        <script>window.imageList = {{.ImageList}};</script>
+        <script>window.imageRefresh = {{.ImageRefresh}};</script>
     </head>
     <body>
-        <script>window.imageList = {{.ImageList}};</script>
+
         <!-- this element contains the panels -->
         <div id="fader" onclick='changeImage()'>
             <!-- this is the first panel -->
-            <img id="img0" src="" />
-            <img id="img1" src="" />
+            <img src="" id="0" />
+            <img src="" id="1"/>
         </div>
+        
     </body>
     
 
