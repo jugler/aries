@@ -7,12 +7,14 @@ import (
 	"net/http"
 	"html/template"
 	"strings"
+	"math/rand"
+
 )
 
 type Page struct {
 	Body  []byte
-	ImageList string
 	ImageRefresh int
+	Images []string
 }
 
 
@@ -33,7 +35,7 @@ func viewHandler(w http.ResponseWriter, r *http.Request) {
 	log.Print("Query: " +  query)
 	p, _ := loadPage(query)
 	if strings.Contains(query, ".htm"){
-		p.ImageList = readImagesDir(typePage)
+		p.Images = readImagesDir(typePage)
 		t, _ := template.ParseFiles(query)
     	t.Execute(w, p)
 	}else{
@@ -47,17 +49,20 @@ func main() {
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
 
-func readImagesDir(directoryName string)(filesString string){
+func readImagesDir(directoryName string)(filenames []string){
 	dirname := "imgs/" + directoryName
 	files, err := ioutil.ReadDir(dirname)
     if err != nil {
         log.Fatal(err)
 	}
-	filenames := make([]string, 0)
 	for _, f := range files {
 		log.Print(dirname+f.Name())
 		filenames=append(filenames, dirname + f.Name())
 	}
-	filesString = strings.Join(filenames,",")
-	return
+	
+	for i := range filenames {
+		j := rand.Intn(i + 1)
+		filenames[i], filenames[j] = filenames[j], filenames[i]
+	}
+	return filenames
 }

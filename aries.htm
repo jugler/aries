@@ -2,21 +2,17 @@
     <head>
         <title>Aries project</title>
         <link rel="stylesheet" type="text/css"href="aries.css">
-        <script type="text/javascript" src="Fader.js"></script>
+        <script>window.imageList = {{.Images}};</script>
         <script type="text/javascript" src="aries.js"></script>
-        <script>window.imageList = {{.ImageList}};</script>
+        <script type="text/javascript" src="Fader.js"></script>
         <script>window.imageRefresh = {{.ImageRefresh}};</script>
     </head>
     <body>
-
-        <!-- this element contains the panels -->
-        <div id="fader" onclick='changeImage()'>
-            <!-- this is the first panel -->
-            <img src="" id="0" />
-            <img src="" id="1"/>
-        </div>
         
+        <div id="fader"  onclick='changeImage()'>
+            {{range $index, $element := .Images}}
+            <img src="{{$element}}" id="{{$index}}" />
+            {{end}}
+        </div>
     </body>
-    
-
 </html>

@@ -18,7 +18,7 @@ http://creativecommons.org/publicdomain/zero/1.0/legalcode
  * duration - the duration of fades, in seconds; this optional parameter
  *            defaults to 0.5
  */
-function Fader(node, duration){
+function Fader(node, duration, maxHeight){
 
   // fetch the DOM node if a string was supplied
   if (typeof node == 'string') node = document.getElementById(node);
@@ -45,13 +45,22 @@ function Fader(node, duration){
     if (child.nodeType == 1){
 
       // update the fader width and height
-      width  = Math.max(width,  child.offsetWidth);
-      height = Math.max(height, child.offsetHeight);
+      width  = Math.min(width,  child.offsetWidth);
+      height = Math.min(height, child.offsetHeight);
 
       // position the panel
+      
+      var marginLeft = (child.width/2 )* -1;
+
+      var marginTop = (maxHeight - child.height)/2 - (child.height - maxHeight)/5;
+      //alert(marginTop)
       child.style.position = 'absolute';
-      child.style.top      = 0;
-      child.style.left     = 0;
+      child.style.top      = "50%";
+      child.style.left     = "50%";
+      child.style.width = child.offsetWidth;
+      child.style.height = child.offsetHeight;
+      child.style.marginTop = marginTop+"px"; //half height
+      child.style.marginLeft = marginLeft+"px";//half width
 
       // add this panel to the list of panels
       this.panels.push(
@@ -80,7 +89,20 @@ function Fader(node, duration){
       function(){
         thisObject.setPanelOpacity(
             thisObject.target,
-            thisObject.panels[thisObject.target].opacity + thisObject.rate);
+            thisObject.panels[thisObject.target].opacity + thisObject.rate, false);
+        if (thisObject.target>0){
+          thisObject.setPanelOpacity(
+              thisObject.target-1,
+              thisObject.panels[thisObject.target].opacity + thisObject.rate, true);
+          }
+        if (thisObject.target == 0 ){
+          if (thisObject.panels[thisObject.panels.length-1].opacity > 0){
+            thisObject.setPanelOpacity(
+              thisObject.panels.length-1,
+              thisObject.panels[thisObject.target].opacity + thisObject.rate, true);
+          }
+        }
+            
       },
       50);
 
@@ -151,7 +173,7 @@ Fader.prototype.setTarget = function(target){
  * index   - the index of the panel
  * opacity - the opacity
  */
-Fader.prototype.setPanelOpacity = function(index, opacity){
+Fader.prototype.setPanelOpacity = function(index, opacity, reverse){
 
   // correct division by zero issues
   if (isNaN(opacity)) opacity = 0;
@@ -162,7 +184,11 @@ Fader.prototype.setPanelOpacity = function(index, opacity){
   // set the opacity of the panel
   this.panels[index].opacity = opacity;
   if (this.useOpacity){
-    this.panels[index].node.style.opacity = opacity;
+    if (reverse){
+      this.panels[index].node.style.opacity = 1-opacity;
+    }else{
+      this.panels[index].node.style.opacity = opacity;
+    }
   }else{
     this.panels[index].node.style.filter  =
         'alpha(opacity=' + (100 * opacity) + ')';
