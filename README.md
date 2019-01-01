@@ -20,7 +20,7 @@ e.g.
 - Service reads the "cubism" tag and applies filters on its images to show only those that match
 
 # Current Functionality
-1. Server loads the imgs directory, sends the html and js back with the filenames on the html
-2. front end (aries.js) loads the images and circles through them with a fade utility. Everytime it cycles through the filenames list it shuffles it.
+1. Server loads the imgs directory, sends the html and js back with the filenames(random order) on the html
+2. front end (aries.js) loads the images and circles through them with a fade utility.
 3. front end scales the images to the appropiate resolution
 
