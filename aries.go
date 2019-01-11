@@ -10,12 +10,22 @@ import (
 	"math/rand"
 
 )
+var session ServerVars
+
+type ServerVars struct{
+	ImagesPortrait[] string
+	ImagesLanscape[] string
+	ImageBatch int
+}
 
 type Page struct {
 	Body  []byte
 	ImageRefresh int
+	PageRefresh int
 	Images []string
+	TypePage string
 }
+
 
 
 func loadPage(title string) (*Page, error) {
@@ -36,6 +46,8 @@ func viewHandler(w http.ResponseWriter, r *http.Request) {
 	p, _ := loadPage(query)
 	if strings.Contains(query, ".htm"){
 		p.Images = readImagesDir(typePage)
+		p.TypePage = typePage
+		p.PageRefresh = (p.ImageRefresh / 1000) * len(p.Images)
 		t, _ := template.ParseFiles(query)
     	t.Execute(w, p)
 	}else{
@@ -44,9 +56,16 @@ func viewHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 
+
 func main() {
+	session := loadServer()
+	log.Print(session.ImageBatch)
 	http.HandleFunc("/", viewHandler)
 	log.Fatal(http.ListenAndServe(":8080", nil))
+}
+
+func loadServer()(*ServerVars){
+	return &ServerVars{ImagesPortrait: readImagesDir("portrait"), ImagesLanscape: readImagesDir("landscape"), ImageBatch:5}
 }
 
 func readImagesDir(directoryName string)(filenames []string){
@@ -64,5 +83,5 @@ func readImagesDir(directoryName string)(filenames []string){
 		j := rand.Intn(i + 1)
 		filenames[i], filenames[j] = filenames[j], filenames[i]
 	}
-	return filenames
+	return filenames[0:10]
 }

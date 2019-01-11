@@ -11,7 +11,7 @@ var imageRefresh;
 
 window.onload = function start() {
     images = window.imageList
-    height = window.screen.availHeight + 15 //compensate for scroll bars
+    height = window.screen.availHeight + 05 //compensate for scroll bars
     width = window.screen.availWidth - 25  //compensate for scroll bars
     //3815x2135 
     //vs la que segun trae 3840 x 2160

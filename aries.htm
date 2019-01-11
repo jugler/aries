@@ -2,14 +2,29 @@
     <head>
         <title>Aries project</title>
         <link rel="stylesheet" type="text/css"href="aries.css">
+        <meta http-equiv="refresh" content="{{.PageRefresh}}">
         <script>window.imageList = {{.Images}};</script>
-        <script type="text/javascript" src="aries.js"></script>
-        <script type="text/javascript" src="Fader.js"></script>
+        <script type="text/javascript" src="ariesTest.js"></script>
         <script>window.imageRefresh = {{.ImageRefresh}};</script>
+        <script>window.TypePage = {{.TypePage}};</script>
+        <script>window.FadeDuration = 4;</script>
+
+        <style type="text/css">
+            #fader
+            {
+                position:absolute;
+                width:100%;
+                height:100%;
+            }
+            #fader img {
+                position: absolute;
+                margin-top: -10px;
+                margin-left: -10px;
+            }
+            </style>
     </head>
-    <body>
-        
-        <div id="fader"  onclick='changeImage()'>
+    <body bgcolor="black">    
+        <div id="fader" onclick="nextImage();"> 
             {{range $index, $element := .Images}}
             <img src="{{$element}}" id="{{$index}}" />
             {{end}}
