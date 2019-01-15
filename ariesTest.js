@@ -1,67 +1,71 @@
+var currentImagesLoaded=1;
+var currentImageId=0;
+var toogle=false;
+
 window.onload = function start() {
     var images = window.imageList;
     var TypePage = window.TypePage;
-    for(var i=0; i < images.length; i++){
-        if (TypePage == "portrait/"){
-            resizeImgsPortrait(i)
-        }else{
-            resizeImgs(i)
-        }
+    //load images
+    for (var imagesIndex=0;imagesIndex<currentImagesLoaded;imagesIndex++){
+        loadImage(imagesIndex);
     }
+    document.getElementById(0).style.opacity=1;
 
-    reduceOpacity(window.imageList.length);
     canvas();
 }
-function reduceOpacity(imgNumber){
-    for(var i=0;i<imgNumber-1;i++){
-        document.getElementById(i).style.opacity=0;
-    }
-    document.getElementById(imgNumber-1).style.opacity=1;
-}
 
-function resizeImgs(id){
-    var img = document.getElementById(id); 
-    if (img == null){
-        alert(id)
-    }
+function loadConfig() {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+      if (this.readyState == 4 && this.status == 200) {
+        var obj = JSON.parse(this.responseText);
+        if (obj.NextImage != toogle){
+            nextImage();
+            toogle = obj.NextImage;
+        }
+      }
+    };
+    xhttp.open("GET", "configs/" + window.TypePage + ".config", true);
+    xhttp.send();
+  }
+
+function loadImage(index){
+    var img = new Image();
+    img.src = window.imageList[index];
+    img.id = index;
+    img.onload= resize;
+    var div = document.getElementById("fader");
+    div.appendChild(img);
+    img.style.opacity=0;
+}
+function resize(e){
+    var img = this; 
     newResolution = calculateAspectRatioFit(img.width, img.height, window.screen.availWidth,screen.availHeight)
     img.width = newResolution.width
     img.height = newResolution.height
-
     //centerimage!!
-    var left = (window.screen.availWidth - img.width)/2
-    img.style.left = left;
-    var top = (window.screen.availHeight - img.height)/2
-
-    img.style.top = top;
-
+    img.style.top = (window.screen.availHeight - img.height)/2
+    img.style.left = (window.screen.availWidth - img.width)/2
 }
-function resizeImgsPortrait(id){
-    var img = document.getElementById(id); 
-    
-    newResolution = calculateAspectRatioFit(img.width, img.height, window.screen.availWidth,screen.availHeight)
-    img.width = newResolution.width
-    img.height = newResolution.height
 
-    //centerimage!!
-    var top = (window.screen.availHeight - img.height)/2
-    var left = (window.screen.availWidth - img.width)/2
-    img.style.top = top;
-    img.style.left = left;
-}
 function calculateAspectRatioFit(srcWidth, srcHeight, maxWidth, maxHeight) {
 
     var ratio = Math.min( (maxWidth+5) / srcWidth, (maxHeight+5) / srcHeight);
     return { width: srcWidth*ratio, height: srcHeight*ratio };
 }
 
-var currentImageId=window.imageList.length-1;
 
 function nextImage(){
     nextImageId = currentImageId+1;
-    if (nextImageId > window.imageList.length-1){
-        nextImageId = 0
+    if (nextImageId >= window.imageList.length){
+        nextImageId=0;
     }
+    if (nextImageId > currentImagesLoaded-1){
+        currentImagesLoaded++;
+        loadImage(currentImagesLoaded-1);
+        nextImageId=currentImagesLoaded-1;
+    }
+    console.log("loading image:" +nextImageId);
     currImg = document.getElementById(currentImageId);
     nxtImg = document.getElementById(nextImageId);
 
@@ -91,4 +95,8 @@ function canvas() {
     window.setInterval(function () {
         nextImage()
     }, imageRefresh);  
+
+    window.setInterval(function(){
+        loadConfig()
+    },5000);
 }

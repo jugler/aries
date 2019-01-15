@@ -8,6 +8,7 @@ import (
 	"html/template"
 	"strings"
 	"math/rand"
+	"encoding/json"
 
 )
 var session ServerVars
@@ -26,6 +27,12 @@ type Page struct {
 	TypePage string
 }
 
+type Config struct {
+	NextImage     bool
+	TypeOfImage   string
+	Images []string
+}
+
 
 
 func loadPage(title string) (*Page, error) {
@@ -34,7 +41,7 @@ func loadPage(title string) (*Page, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &Page{Body: body, ImageRefresh: 60000}, nil
+	return &Page{Body: body, ImageRefresh: 300000}, nil
 }
 
 func viewHandler(w http.ResponseWriter, r *http.Request) {
@@ -50,16 +57,42 @@ func viewHandler(w http.ResponseWriter, r *http.Request) {
 		p.PageRefresh = (p.ImageRefresh / 1000) * len(p.Images)
 		t, _ := template.ParseFiles(query)
     	t.Execute(w, p)
+	}else if(strings.Contains(query, "configs")){
+		fmt.Fprintf(w, "%s", getConfig(typePage))
 	}else{
 		fmt.Fprintf(w, "%s", p.Body)
 	}
 }
 
+func getConfig(typeConfig string)(jsonConfig []byte){	
+	var config = readConfig(typeConfig)
+
+	//get Images by tags on the config
+	config.Images = readImagesDir(typeConfig)
+	//
+	jsonConfig, err := json.Marshal(config)
+	if err != nil {
+		log.Fatal( err)
+	}
+
+	
+	return jsonConfig
+}
+
+func readConfig(typeConfig string)(config Config){
+	filename := "config/" + typeConfig[0:len(typeConfig)-1] + ".config" 
+	body, err := ioutil.ReadFile(filename)
+	if err != nil {
+		log.Fatal(err)
+	}
+	json.Unmarshal([]byte(body), &config)
+
+	return
+}
 
 
 func main() {
-	session := loadServer()
-	log.Print(session.ImageBatch)
+	
 	http.HandleFunc("/", viewHandler)
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
@@ -75,7 +108,7 @@ func readImagesDir(directoryName string)(filenames []string){
         log.Fatal(err)
 	}
 	for _, f := range files {
-		log.Print(dirname+f.Name())
+		
 		filenames=append(filenames, dirname + f.Name())
 	}
 	
@@ -83,5 +116,5 @@ func readImagesDir(directoryName string)(filenames []string){
 		j := rand.Intn(i + 1)
 		filenames[i], filenames[j] = filenames[j], filenames[i]
 	}
-	return filenames[0:10]
+	return filenames
 }

@@ -7,7 +7,7 @@
         <script type="text/javascript" src="ariesTest.js"></script>
         <script>window.imageRefresh = {{.ImageRefresh}};</script>
         <script>window.TypePage = {{.TypePage}};</script>
-        <script>window.FadeDuration = 4;</script>
+        <script>window.FadeDuration = 3;</script>
 
         <style type="text/css">
             #fader
@@ -25,9 +25,7 @@
     </head>
     <body bgcolor="black">    
         <div id="fader" onclick="nextImage();"> 
-            {{range $index, $element := .Images}}
-            <img src="{{$element}}" id="{{$index}}" />
-            {{end}}
+            
         </div>
     </body>
 </html>
