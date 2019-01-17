@@ -98,5 +98,5 @@ function canvas() {
 
     window.setInterval(function(){
         loadConfig()
-    },5000);
+    },3000);
 }
