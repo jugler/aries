@@ -70,10 +70,20 @@ function nextImage(){
     nxtImg = document.getElementById(nextImageId);
 
     opacityLoop(currImg,currImg.style.opacity, false);  
-    opacityLoop(nxtImg,0, true);  
-
+    opacityLoop(nxtImg,0,true);  
+    setTimeout(function () {  
+        clearOpacityOfRest(currentImageId);
+    }, window.FadeDuration*1000)
     currentImageId=nextImageId;
 
+}
+
+function clearOpacityOfRest(indexCurrent){
+    for (var imagesIndex=0;imagesIndex<currentImagesLoaded;imagesIndex++){
+        if (imagesIndex != indexCurrent){
+            document.getElementById(imagesIndex).style.opacity=0;
+        }
+    }
 }
 
 
