@@ -8,6 +8,7 @@ import (
 	"log"
 	"math/rand"
 	"net/http"
+	"strconv"
 	"strings"
 )
 
@@ -39,26 +40,85 @@ func loadPage(title string) (*Page, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &Page{Body: body, ImageRefresh: 300000}, nil
+	return &Page{Body: body, ImageRefresh: 600000}, nil
 }
 
 func viewHandler(w http.ResponseWriter, r *http.Request) {
 	url := r.URL.Path[len("/"):]
 	s := strings.SplitAfterN(url, "/", 2)
-	typePage, query := s[0], s[1]
-	log.Print("Serving: " + typePage)
-	log.Print("Query: " + query)
+	var typePage string
+	var query string
+	if len(s) >= 2 {
+		typePage, query = s[0], s[1]
+	} else {
+		typePage = s[0]
+
+	}
+	log.Print("Serving: " + typePage + ", Query: " + query)
 	p, _ := loadPage(query)
-	if strings.Contains(query, ".htm") {
-		p.Images = readImagesDir(typePage)
+
+	if strings.Contains(query, "aries.htm") {
+		p.Images = readImagesDir(typePage, readConfig(typePage))
+		if len(p.Images) == 0 {
+			p.Images = readImagesDir(typePage, Config{TypeOfImage: "all"})
+		}
 		p.TypePage = typePage
 		p.PageRefresh = (p.ImageRefresh / 1000) * len(p.Images)
 		t, _ := template.ParseFiles(query)
 		t.Execute(w, p)
 	} else if strings.Contains(query, "configs") {
 		fmt.Fprintf(w, "%s", getConfig(typePage))
+	} else if strings.Contains(query, "updateConfig") {
+		if err := r.ParseForm(); err != nil {
+			log.Fatal(w, "ParseForm() err: %v", err)
+			return
+		}
+
+		nextImage := r.FormValue("nextImage")
+		typeImage := r.FormValue("typeImage")
+		fmt.Fprintf(w, "%s", updateConfig(typePage, nextImage, typeImage))
+
 	} else {
-		fmt.Fprintf(w, "%s", p.Body)
+		if p != nil {
+			fmt.Fprintf(w, "%s", p.Body)
+		} else {
+			fmt.Fprintf(w, "%s", "404: Not found")
+		}
+	}
+}
+
+func updateConfig(typePage string, nextImage string, typeImage string) (jsonConfig []byte) {
+	var currentConfig = readConfig(typePage)
+	nextImagetmp, err := strconv.ParseBool(nextImage)
+	if err != nil {
+		log.Print("No valid value passed for nextImage, using current one")
+		nextImagetmp = currentConfig.NextImage
+	}
+	if nextImagetmp {
+		nextImagetmp = !currentConfig.NextImage
+	}
+	if typeImage == "" {
+		typeImage = currentConfig.TypeOfImage
+	}
+
+	var newConfig = Config{TypeOfImage: typeImage, NextImage: nextImagetmp}
+	writeConfigFile(newConfig, typePage)
+
+	jsonConfig, erre := json.Marshal(newConfig)
+	if erre != nil {
+		log.Fatal(erre)
+	}
+
+	return jsonConfig
+
+}
+
+func writeConfigFile(config Config, typeConfig string) {
+	filename := "config/" + typeConfig[0:len(typeConfig)-1] + ".config"
+	configJSON, _ := json.Marshal(config)
+	err := ioutil.WriteFile(filename, configJSON, 0644)
+	if err != nil {
+		log.Fatal(err)
 	}
 }
 
@@ -66,7 +126,7 @@ func getConfig(typeConfig string) (jsonConfig []byte) {
 	var config = readConfig(typeConfig)
 
 	//get Images by tags on the config
-	config.Images = readImagesDir(typeConfig)
+	config.Images = readImagesDir(typeConfig, config)
 	//
 	jsonConfig, err := json.Marshal(config)
 	if err != nil {
@@ -93,19 +153,26 @@ func main() {
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
 
-func loadServer() *ServerVars {
-	return &ServerVars{ImagesPortrait: readImagesDir("portrait"), ImagesLanscape: readImagesDir("landscape"), ImageBatch: 5}
-}
-
-func readImagesDir(directoryName string) (filenames []string) {
+func readImagesDir(directoryName string, config Config) (filenames []string) {
 	dirname := "imgs/" + directoryName
 	files, err := ioutil.ReadDir(dirname)
 	if err != nil {
 		log.Fatal(err)
 	}
 	for _, f := range files {
+		if config.TypeOfImage == "all" {
+			filenames = append(filenames, dirname+f.Name())
 
-		filenames = append(filenames, dirname+f.Name())
+		} else {
+			//split image by -
+			//filter by tag
+			tags := strings.Split(f.Name(), "-")
+			for _, tag := range tags {
+				if tag == config.TypeOfImage {
+					filenames = append(filenames, dirname+f.Name())
+				}
+			}
+		}
 	}
 
 	for i := range filenames {
