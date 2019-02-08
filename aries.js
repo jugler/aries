@@ -40,14 +40,13 @@ function loadImage(index){
     img.id = index;
     img.onload= resize;
     var div = document.getElementById("fader");
-    if (document.getElementById(index) == null){
-        div.appendChild(img);
-    }else{
+    
+    if (document.getElementById(index) != null){
         oldImg = document.getElementById(index);
-        oldImg.src = img.src;
-        oldImg.id = img.id;
-        oldImg.onload = resize;
+        oldImg.parentNode.removeChild(oldImg);
     }
+
+    div.appendChild(img);
    
     img.style.opacity=0;
 }
