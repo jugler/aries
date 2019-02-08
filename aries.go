@@ -129,7 +129,10 @@ func getConfig(typeConfig string) (jsonConfig []byte) {
 
 	//get Images by tags on the config
 	config.Images = readImagesDir(typeConfig, config)
-	//
+	if len(config.Images) == 0 {
+		config.Images = readImagesDir(typeConfig, Config{TypeOfImage: "all"})
+		config.TypeOfImage = "all"
+	}
 	jsonConfig, err := json.Marshal(config)
 	if err != nil {
 		log.Fatal(err)
