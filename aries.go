@@ -26,6 +26,7 @@ type Page struct {
 	PageRefresh  int
 	Images       []string
 	TypePage     string
+	TypeOfImage  string
 }
 
 type Config struct {
@@ -63,6 +64,7 @@ func viewHandler(w http.ResponseWriter, r *http.Request) {
 			p.Images = readImagesDir(typePage, Config{TypeOfImage: "all"})
 		}
 		p.TypePage = typePage
+		p.TypeOfImage = readConfig(typePage).TypeOfImage
 		p.PageRefresh = (p.ImageRefresh / 1000) * len(p.Images)
 		t, _ := template.ParseFiles(query)
 		t.Execute(w, p)

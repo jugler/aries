@@ -19,6 +19,11 @@ function loadConfig() {
     xhttp.onreadystatechange = function() {
       if (this.readyState == 4 && this.status == 200) {
         var obj = JSON.parse(this.responseText);
+        if (obj.TypeOfImage != window.TypeOfImage){
+            window.imageList = obj.Images
+            window.TypeOfImage = obj.TypeOfImage
+            nextImage()
+        }
         if (obj.NextImage != toogle){
             nextImage();
             toogle = obj.NextImage;
@@ -35,7 +40,15 @@ function loadImage(index){
     img.id = index;
     img.onload= resize;
     var div = document.getElementById("fader");
-    div.appendChild(img);
+    if (document.getElementById(index) == null){
+        div.appendChild(img);
+    }else{
+        oldImg = document.getElementById(index);
+        oldImg.src = img.src;
+        oldImg.id = img.id;
+        oldImg.onload = resize;
+    }
+   
     img.style.opacity=0;
 }
 function resize(e){
@@ -60,9 +73,11 @@ function nextImage(){
     if (nextImageId >= window.imageList.length){
         nextImageId=0;
     }
+    loadImage(nextImageId);
+   
     if (nextImageId > currentImagesLoaded-1){
         currentImagesLoaded++;
-        loadImage(currentImagesLoaded-1);
+        //loadImage(currentImagesLoaded-1);
         nextImageId=currentImagesLoaded-1;
     }
     console.log("loading image:" +nextImageId);
