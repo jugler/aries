@@ -173,7 +173,7 @@ func readImagesDir(directoryName string, config Config) (filenames []string) {
 			//filter by tag
 			tags := strings.Split(f.Name(), "-")
 			for _, tag := range tags {
-				if tag == config.TypeOfImage {
+				if strings.Contains(tag, config.TypeOfImage) {
 					filenames = append(filenames, dirname+f.Name())
 				}
 			}
