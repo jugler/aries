@@ -68,6 +68,7 @@ function calculateAspectRatioFit(srcWidth, srcHeight, maxWidth, maxHeight) {
 
 
 function nextImage(){
+    window.clearInterval(window.ImageRefreshInterval);
     nextImageId = currentImageId+1;
     if (nextImageId >= window.imageList.length){
         nextImageId=0;
@@ -90,6 +91,9 @@ function nextImage(){
     }, window.FadeDuration*1000)
     currentImageId=nextImageId;
 
+    window.ImageRefreshInterval = window.setInterval(function () {
+        nextImage()
+    }, imageRefresh);  
 }
 
 function clearOpacityOfRest(indexCurrent){
@@ -116,7 +120,7 @@ function opacityLoop (image,opacity,reverse) {
 
 
 function canvas() {
-    window.setInterval(function () {
+    window.ImageRefreshInterval = window.setInterval(function () {
         nextImage()
     }, imageRefresh);  
 
