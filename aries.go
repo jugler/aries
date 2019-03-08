@@ -55,7 +55,7 @@ func viewHandler(w http.ResponseWriter, r *http.Request) {
 		typePage = s[0]
 
 	}
-	log.Print("Serving: " + typePage + ", Query: " + query)
+	//log.Print("Serving: " + typePage + ", Query: " + query)
 	p, _ := loadPage(query)
 
 	if strings.Contains(query, "aries.htm") {
@@ -165,10 +165,9 @@ func readImagesDir(directoryName string, config Config) (filenames []string) {
 		log.Fatal(err)
 	}
 	for _, f := range files {
-		if config.TypeOfImage == "all" {
+		if config.TypeOfImage == "all" || (config.TypeOfImage == "sfw" && !strings.Contains(f.Name(), "nsfw")) {
 			filenames = append(filenames, dirname+f.Name())
-
-		} else {
+		} else if config.TypeOfImage != "sfw" {
 			//split image by -
 			//filter by tag
 			tags := strings.Split(f.Name(), "-")
