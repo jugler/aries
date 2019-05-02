@@ -32,7 +32,6 @@ func ReadImagesDir(directoryName string, externalDevicePath string, typeOfImage 
 		log.Print("While checking for external devices:", err)
 	}
 	if existsExternal {
-		log.Print("Found external drive, reading images")
 		externalFilenames := readFilesFromDir(externalDevicePath+dirName, "EXT")
 		filenames = append(filenames, externalFilenames...)
 	}
