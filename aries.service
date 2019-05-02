@@ -1,0 +1,14 @@
+[Unit]
+Description=Aries Service (Digital Canvas)
+After=network.target
+
+[Service]
+Type=simple
+User=pi
+WorkingDirectory=/home/pi/aries/
+ExecStart=/home/pi/aries/aries
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target
