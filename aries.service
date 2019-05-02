@@ -5,8 +5,8 @@ After=network.target
 [Service]
 Type=simple
 User=pi
-WorkingDirectory=/home/pi/aries/
-ExecStart=/home/pi/aries/aries
+WorkingDirectory=/home/pi/go/src/github.com/aries
+ExecStart=/home/pi/go/src/github.com/aries/aries
 Restart=always
 RestartSec=3
 

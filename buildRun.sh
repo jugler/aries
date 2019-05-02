@@ -1,2 +1,2 @@
-go build aries.go
+go build app/aries.go
 ./aries
