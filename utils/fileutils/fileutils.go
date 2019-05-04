@@ -49,6 +49,7 @@ func UpdateConfig(typePage string, nextImage string, typeImage string) (jsonConf
 
 }
 
+//WriteConfigFile serializes a config into a file
 func WriteConfigFile(config models.Config, typeConfig string) {
 	filename := "config/" + typeConfig + ".config"
 	configJSON, _ := json.Marshal(config)
