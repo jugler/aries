@@ -63,14 +63,39 @@ func viewHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+var imagesPortrait = dirutils.ReadImagesDir("portrait", mountLocation, "all")
+var imagesLandscape = dirutils.ReadImagesDir("landscape", mountLocation, "all")
+var typeOfImage = "all"
+
 func getConfig(typeConfig string) (jsonConfig []byte) {
-	var config = fileutils.ReadConfig(typeConfig[0 : len(typeConfig)-1])
+	typeConfig = typeConfig[0 : len(typeConfig)-1]
+	var config = fileutils.ReadConfig(typeConfig)
 
 	//get Images by tags on the config
-	config.Images = dirutils.ReadImagesDir(typeConfig, mountLocation, config.TypeOfImage)
-	if len(config.Images) == 0 {
-		config.Images = dirutils.ReadImagesDir(typeConfig, mountLocation, models.Config{TypeOfImage: "all"}.TypeOfImage)
-		config.TypeOfImage = "all"
+	if config.TypeOfImage != typeOfImage {
+		log.Printf("Config %s not the same as global %s ", config.TypeOfImage, typeOfImage)
+		imagesPortrait = dirutils.ReadImagesDir("portrait/", mountLocation, config.TypeOfImage)
+		imagesLandscape = dirutils.ReadImagesDir("landscape/", mountLocation, config.TypeOfImage)
+		config.Images = imagesLandscape
+		if typeConfig == "portrait" {
+			config.Images = imagesPortrait
+		}
+		typeOfImage = config.TypeOfImage
+		if len(config.Images) == 0 {
+			log.Printf("Didnt found images for %s searching all ", config.TypeOfImage)
+			imagesPortrait = dirutils.ReadImagesDir("portrait/", mountLocation, models.Config{TypeOfImage: "all"}.TypeOfImage)
+			imagesLandscape = dirutils.ReadImagesDir("landscape/", mountLocation, models.Config{TypeOfImage: "all"}.TypeOfImage)
+			config.Images = imagesLandscape
+			if typeConfig == "portrait" {
+				config.Images = imagesPortrait
+			}
+			config.TypeOfImage = "all"
+		}
+	} else {
+		config.Images = imagesLandscape
+		if typeConfig == "portrait" {
+			config.Images = imagesPortrait
+		}
 	}
 	jsonConfig, err := json.Marshal(config)
 	if err != nil {
