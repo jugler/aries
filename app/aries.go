@@ -15,7 +15,7 @@ import (
 )
 
 var session models.ServerVars
-var externalPath = "/media/pi/CONFIG/"
+var mountLocation = "/media/pi/"
 
 func viewHandler(w http.ResponseWriter, r *http.Request) {
 	url := r.URL.Path[len("/"):]
@@ -32,9 +32,9 @@ func viewHandler(w http.ResponseWriter, r *http.Request) {
 	p, _ := fileutils.LoadPage(query)
 
 	if strings.Contains(query, "aries.htm") {
-		p.Images = dirutils.ReadImagesDir(typePage, externalPath, fileutils.ReadConfig(typePage).TypeOfImage)
+		p.Images = dirutils.ReadImagesDir(typePage, mountLocation, fileutils.ReadConfig(typePage).TypeOfImage)
 		if len(p.Images) == 0 {
-			p.Images = dirutils.ReadImagesDir(typePage, externalPath, models.Config{TypeOfImage: "all"}.TypeOfImage)
+			p.Images = dirutils.ReadImagesDir(typePage, mountLocation, models.Config{TypeOfImage: "all"}.TypeOfImage)
 		}
 		p.TypePage = typePage
 		p.TypeOfImage = fileutils.ReadConfig(typePage).TypeOfImage
@@ -67,9 +67,9 @@ func getConfig(typeConfig string) (jsonConfig []byte) {
 	var config = fileutils.ReadConfig(typeConfig)
 
 	//get Images by tags on the config
-	config.Images = dirutils.ReadImagesDir(typeConfig, externalPath, config.TypeOfImage)
+	config.Images = dirutils.ReadImagesDir(typeConfig, mountLocation, config.TypeOfImage)
 	if len(config.Images) == 0 {
-		config.Images = dirutils.ReadImagesDir(typeConfig, externalPath, models.Config{TypeOfImage: "all"}.TypeOfImage)
+		config.Images = dirutils.ReadImagesDir(typeConfig, mountLocation, models.Config{TypeOfImage: "all"}.TypeOfImage)
 		config.TypeOfImage = "all"
 	}
 	jsonConfig, err := json.Marshal(config)

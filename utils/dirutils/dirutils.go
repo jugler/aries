@@ -20,19 +20,17 @@ func readFilesFromDir(dirName string, prefix string) (filenames []string) {
 }
 
 //ReadImagesDir reads the folder and return those images that match the typeOfImage provided
-func ReadImagesDir(directoryName string, externalDevicePath string, typeOfImage string) (filenames []string) {
+func ReadImagesDir(directoryName string, mountLocation string, typeOfImage string) (filenames []string) {
 	dirName := "imgs/" + directoryName
 
 	//read local files
 	filenames = readFilesFromDir(dirName, "")
 
 	//read external (usb) files
-	existsExternal, err := fileutils.Exists(externalDevicePath)
-	if err != nil {
-		log.Print("While checking for external devices:", err)
-	}
-	if existsExternal {
-		externalFilenames := readFilesFromDir(externalDevicePath+dirName, "EXT")
+	//discover read locations
+	externalDirs := discoverExternalDrives(mountLocation, dirName)
+	for _, dir := range externalDirs {
+		externalFilenames := readFilesFromDir(dir+dirName, "EXT")
 		filenames = append(filenames, externalFilenames...)
 	}
 
@@ -41,4 +39,20 @@ func ReadImagesDir(directoryName string, externalDevicePath string, typeOfImage 
 
 	//return randomized filenames order
 	return listutils.RandomList(filenames)
+}
+
+func discoverExternalDrives(mountLocation string, imagesDir string) (externalDirs []string) {
+	//read mount location, read all dirs, then for each file check if image directory exists
+	externalDevices := readFilesFromDir(mountLocation, "")
+	for _, externalDevice := range externalDevices {
+		//check if imagesDir exists on each external
+		externalImages, err := fileutils.Exists(externalDevice + "/" + imagesDir)
+		if err != nil {
+			log.Printf("Error while reading dir: %v", err)
+		}
+		if externalImages {
+			externalDirs = append(externalDirs, externalDevice+"/")
+		}
+	}
+	return externalDirs
 }
