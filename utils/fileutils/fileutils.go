@@ -28,7 +28,6 @@ func UpdateConfig(typePage string, nextImage string, typeImage string) (jsonConf
 	var currentConfig = ReadConfig(typePage)
 	nextImagetmp, err := strconv.ParseBool(nextImage)
 	if err != nil {
-		log.Print("No valid value passed for nextImage, using current one")
 		nextImagetmp = currentConfig.NextImage
 	}
 	if nextImagetmp {
