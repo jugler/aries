@@ -16,7 +16,7 @@ func ReadConfig(typeConfig string) (config models.Config) {
 	filename := "config/" + typeConfig + ".config"
 	body, err := ioutil.ReadFile(filename)
 	if err != nil {
-		//log.Printf(err)
+		log.Print(err)
 	}
 	json.Unmarshal([]byte(body), &config)
 

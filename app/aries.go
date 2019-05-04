@@ -51,7 +51,7 @@ func viewHandler(w http.ResponseWriter, r *http.Request) {
 
 		nextImage := r.FormValue("nextImage")
 		typeImage := r.FormValue("typeImage")
-		fmt.Fprintf(w, "%s", fileutils.UpdateConfig(typePage, nextImage, typeImage))
+		fmt.Fprintf(w, "%s", fileutils.UpdateConfig(typePage[0:len(typePage)-1], nextImage, typeImage))
 
 	} else {
 		if p != nil {

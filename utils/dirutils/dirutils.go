@@ -11,7 +11,7 @@ import (
 func readFilesFromDir(dirName string, prefix string) (filenames []string) {
 	files, err := ioutil.ReadDir(dirName)
 	if err != nil {
-		log.Print(err)
+		//log.Print(err)
 	}
 	for _, f := range files {
 		filenames = append(filenames, prefix+dirName+f.Name())
