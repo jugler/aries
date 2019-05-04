@@ -32,12 +32,12 @@ func viewHandler(w http.ResponseWriter, r *http.Request) {
 	p, _ := fileutils.LoadPage(query)
 
 	if strings.Contains(query, "aries.htm") {
-		p.Images = dirutils.ReadImagesDir(typePage, mountLocation, fileutils.ReadConfig(typePage).TypeOfImage)
+		p.Images = dirutils.ReadImagesDir(typePage, mountLocation, fileutils.ReadConfig(typePage[0:len(typePage)-1]).TypeOfImage)
 		if len(p.Images) == 0 {
 			p.Images = dirutils.ReadImagesDir(typePage, mountLocation, models.Config{TypeOfImage: "all"}.TypeOfImage)
 		}
 		p.TypePage = typePage
-		p.TypeOfImage = fileutils.ReadConfig(typePage).TypeOfImage
+		p.TypeOfImage = fileutils.ReadConfig(typePage[0 : len(typePage)-1]).TypeOfImage
 		p.PageRefresh = (p.ImageRefresh / 1000) * len(p.Images)
 		t, _ := template.ParseFiles(query)
 		t.Execute(w, p)
@@ -64,7 +64,7 @@ func viewHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func getConfig(typeConfig string) (jsonConfig []byte) {
-	var config = fileutils.ReadConfig(typeConfig)
+	var config = fileutils.ReadConfig(typeConfig[0 : len(typeConfig)-1])
 
 	//get Images by tags on the config
 	config.Images = dirutils.ReadImagesDir(typeConfig, mountLocation, config.TypeOfImage)

@@ -13,10 +13,10 @@ import (
 
 //ReadConfig Reads a config file (portrait/landscape) and returns the Config object
 func ReadConfig(typeConfig string) (config models.Config) {
-	filename := "config/" + typeConfig[0:len(typeConfig)-1] + ".config"
+	filename := "config/" + typeConfig + ".config"
 	body, err := ioutil.ReadFile(filename)
 	if err != nil {
-		log.Print(err)
+		//log.Printf(err)
 	}
 	json.Unmarshal([]byte(body), &config)
 
@@ -39,7 +39,7 @@ func UpdateConfig(typePage string, nextImage string, typeImage string) (jsonConf
 	}
 
 	var newConfig = models.Config{TypeOfImage: typeImage, NextImage: nextImagetmp}
-	writeConfigFile(newConfig, typePage)
+	WriteConfigFile(newConfig, typePage)
 
 	jsonConfig, erre := json.Marshal(newConfig)
 	if erre != nil {
@@ -50,8 +50,8 @@ func UpdateConfig(typePage string, nextImage string, typeImage string) (jsonConf
 
 }
 
-func writeConfigFile(config models.Config, typeConfig string) {
-	filename := "config/" + typeConfig[0:len(typeConfig)-1] + ".config"
+func WriteConfigFile(config models.Config, typeConfig string) {
+	filename := "config/" + typeConfig + ".config"
 	configJSON, _ := json.Marshal(config)
 	err := ioutil.WriteFile(filename, configJSON, 0644)
 	if err != nil {
