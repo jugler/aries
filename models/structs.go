@@ -22,4 +22,5 @@ type Config struct {
 	NextImage   bool
 	TypeOfImage string
 	Images      []string
+	Reload      bool
 }

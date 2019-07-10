@@ -29,9 +29,7 @@ e.g.
 7. refreshes the page when all images have been cycled
 
 #TODO
-1. backend sepparate image tags when reading image
-2. backend filter images based on config and tag of the images
-3. read config file and update image list when its a different type
-3. front end receive change of image type and act on it
-2. front end either refresh the page with the new type, or ask for images of that type and redo the DOM
+1. Dockerize the app
+2. Support page refresh command
+3. Rebuild app with a golang http framework
 

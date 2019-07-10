@@ -15,7 +15,10 @@ import (
 )
 
 var session models.ServerVars
+
 var mountLocation = "/media/pi/"
+
+//var mountLocation = "/Users/jugler/code/ariesImgs/"
 
 func viewHandler(w http.ResponseWriter, r *http.Request) {
 	url := r.URL.Path[len("/"):]
@@ -101,7 +104,10 @@ func getConfig(typeConfig string) (jsonConfig []byte) {
 	if err != nil {
 		log.Print(err)
 	}
-
+	if config.Reload == true {
+		config.Reload = false
+		fileutils.WriteConfigFile(config, typeConfig)
+	}
 	return jsonConfig
 }
 

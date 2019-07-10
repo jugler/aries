@@ -12,3 +12,31 @@ body {
     margin-top: -10px;
     margin-left: -10px;
 }
+
+
+.flippedVertical {
+    transform: scale(1, -1);
+    -moz-transform: scale(1, -1);
+    -webkit-transform: scale(1, -1);
+    -o-transform: scale(1, -1);
+    -khtml-transform: scale(1, -1);
+    -ms-transform: scale(1, -1);
+}
+
+.flippedHorizontal {
+    transform: scale(-1, 1);
+    -moz-transform: scale(-1, 1);
+    -webkit-transform: scale(-1, 1);
+    -o-transform: scale(-1, 1);
+    -khtml-transform: scale(-1, 1);
+    -ms-transform: scale(-1, 1);
+}
+
+.flippedBoth{
+    transform: scale(-1, -1);
+    -moz-transform: scale(-1, -1);
+    -webkit-transform: scale(-1, -1);
+    -o-transform: scale(-1, -1);
+    -khtml-transform: scale(-1, -1);
+    -ms-transform: scale(-1, -1);
+}

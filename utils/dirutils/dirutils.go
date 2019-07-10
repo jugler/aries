@@ -51,6 +51,7 @@ func discoverExternalDrives(mountLocation string, imagesDir string) (externalDir
 			log.Printf("Error while reading dir: %v", err)
 		}
 		if externalImages {
+			log.Printf("Found external mount location with images dir in: %s/%s", externalDevice, imagesDir)
 			externalDirs = append(externalDirs, externalDevice+"/")
 		}
 	}
