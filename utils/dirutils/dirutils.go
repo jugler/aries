@@ -4,8 +4,8 @@ import (
 	"io/ioutil"
 	"log"
 
-	"github.com/aries/utils/fileutils"
-	"github.com/aries/utils/listutils"
+	"github.com/jugler/aries/utils/fileutils"
+	"github.com/jugler/aries/utils/listutils"
 )
 
 func readFilesFromDir(dirName string, prefix string) (filenames []string) {

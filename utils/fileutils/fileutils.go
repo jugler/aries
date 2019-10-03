@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/aries/models"
+	"github.com/jugler/aries/models"
 )
 
 //ReadConfig Reads a config file (portrait/landscape) and returns the Config object

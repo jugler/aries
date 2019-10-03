@@ -9,9 +9,9 @@ import (
 	"os"
 	"strings"
 
-	"github.com/aries/models"
-	"github.com/aries/utils/dirutils"
-	"github.com/aries/utils/fileutils"
+	"github.com/jugler/aries/models"
+	"github.com/jugler/aries/utils/dirutils"
+	"github.com/jugler/aries/utils/fileutils"
 )
 
 var session models.ServerVars
