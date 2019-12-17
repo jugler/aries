@@ -1,0 +1,14 @@
+[Unit]
+Description=Canvas watchdog service
+After=aries.service
+
+[Service]
+Type=simple
+User=pi
+WorkingDirectory=/home/pi/go/src/github.com/jugler/aries
+ExecStart=/home/pi/go/src/github.com/jugler/aries/canvas_watchdog.sh
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

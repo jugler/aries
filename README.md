@@ -33,3 +33,7 @@ e.g.
 2. Support page refresh command
 3. Rebuild app with a golang http framework
 
+
+Autostart goes (in Buster) here: /etc/xdg/lxsession/LXDE-pi/autostart
+
+
